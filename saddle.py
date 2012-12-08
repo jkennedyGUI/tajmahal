@@ -93,6 +93,14 @@ class Uniforms():
                 self.modelMatrix = item
         self.UIRotation = N.eye(4, dtype=N.float32)
 
+    #def UpdateRotation(self, cam):
+    #   # rotate given camera's rotation
+    #   self.UIRotation = N.dot(rotationXMatrix(cam.rotation[0],
+    #                           N.dot(rotationYMatrix(cam.rotation[1],
+    #                                 rotationZMatrix(cam.rotation[3])))
+      
+      
+
     def UpdateRotation(self, rotX, rotY, rotZ):
         # Update the user requested rotations:
         self.UIRotation = N.dot(rotationXMatrix(rotX),
@@ -190,6 +198,8 @@ def main():
         #clock.tick(30)
         lastMouseX = None
         lastMouseY = None
+        distX = 0
+        distY = 0
         
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -200,24 +210,25 @@ def main():
                 if event.key == K_SPACE:
                     n = theUniforms.items['showLines']
                     theUniforms.items['showLines'] = (n+1)%2
-            if event.type == MOUSEMOTION:
-                distX = 0
-                distY = 0
+                    
+            if event.type == MOUSEMOTION and pygame.mouse.get_pressed()[0]:
                 if lastMouseX is not None and lastMouseY is not None:
                     distX = event.pos[0] - lastMouseX
                     distY = event.pos[1] - lastMouseY
                 # Now we have to rotate around the object by X and Y's diff.
-                # How do I do that..?
                 lastMouseX = event.pos[0]
-                lastmouseY = event.pos[1]
+                lastMouseY = event.pos[1]
                 
         # We need to rotate the CAMERA around origin, not the object
         pressed = pygame.key.get_pressed()
+        rotX += 0.02 * distY
+        rotY -= 0.02 * distX
+        
         if pressed[K_w]:
             rotX -= 0.02
-            distY = -2
+            distX = -2
         if pressed[K_s]:
-            rotX += 0.02
+            rotY += 0.02
             distY = 2
         if pressed[K_a]:
             rotY += 0.02
